@@ -1,0 +1,39 @@
+Config.expname = "eth3d_freenerf"
+
+# basic configs
+Config.data_dir = "data/nerf_data/nerf_llff_data"
+Config.checkpoint_dir = "out/myexp"
+
+Config.dataset_loader = 'eth3d'
+Config.white_background = False
+Config.near = 0
+Config.far = 1
+Config.factor = 1
+Config.render_factor = 1
+MipNerfModel.ray_shape = 'cylinder'
+MLP.density_noise = 1.
+
+# default with regnerf's learning rate setting
+Config.lr_init = 0.002
+Config.lr_final = 0.00002
+Config.lr_delay_steps = 512
+Config.lr_delay_mult = 0.01
+Config.grad_max_norm = 0.1
+Config.grad_max_val = 0.1
+
+
+# num_views dependent config
+Config.n_input_views = 0
+Config.max_steps = 200000
+Config.project = "eth3d"
+
+
+# use trick or not
+Config.freq_reg = True
+Config.freq_reg_end = 100000 # int(0.5 * Config.max_steps)
+
+Config.occ_reg_loss_mult = 0.01
+Config.occ_reg_range = 20
+Config.occ_wb_prior = False
+
+Config.load_random_rays = False

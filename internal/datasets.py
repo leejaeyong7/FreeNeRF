@@ -31,6 +31,7 @@ import cv2
 def load_dataset(split, train_dir, config):
   """Loads a split of a dataset using the data_loader specified by `config`."""
   dataset_dict = {
+      'eth3d': ETH3D,
       'blender': Blender,
       'llff': LLFF,
       'multicam': Multicam,
