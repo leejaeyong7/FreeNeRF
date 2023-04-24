@@ -20,6 +20,7 @@ Config.lr_delay_steps = 512
 Config.lr_delay_mult = 0.01
 Config.grad_max_norm = 0.1
 Config.grad_max_val = 0.1
+Config.use_wandb = False
 
 
 # num_views dependent config

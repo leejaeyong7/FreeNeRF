@@ -86,7 +86,7 @@ def main(unused_argv):
   data_path = Path(config.data_dir)
   shutil.copy(data_path / 'transforms.json', output_path / 'transforms.json')
 
-  while True:
+  for i in range(10):
     # Fix for loading pre-trained models.
     try:
       state = checkpoints.restore_checkpoint(config.checkpoint_dir, state)
