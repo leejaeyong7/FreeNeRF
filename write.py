@@ -55,25 +55,6 @@ def main(unused_argv):
   state = utils.TrainState(optimizer=optimizer)
   del optimizer, init_variables
 
-  # Rendering is forced to be deterministic even if training was randomized, as
-  # this eliminates 'speckle' artifacts.
-  def render_eval_fn(variables, _, rays):
-    return jax.lax.all_gather(
-        model.apply(
-            variables,
-            None,  # Deterministic.
-            rays,
-            resample_padding=config.resample_padding_final,
-            compute_extras=True), axis_name='batch')
-
-  # pmap over only the data input.
-  render_eval_pfn = jax.pmap(
-      render_eval_fn,
-      in_axes=(None, None, 0),
-      donate_argnums=2,
-      axis_name='batch',
-  )
-
 
   last_step = 0
   out_dir = path.join(config.checkpoint_dir, 'results')
@@ -118,6 +99,29 @@ def main(unused_argv):
     utils.makedirs(out_dir)
 
   key = random.PRNGKey(0 if config.deterministic_showcase else step)
+
+  # Rendering is forced to be deterministic even if training was randomized, as
+  # this eliminates 'speckle' artifacts.
+  freq_reg_mask = (
+    math.get_freq_reg_mask(99, step, config.freq_reg_end, config.max_vis_freq_ratio),
+    math.get_freq_reg_mask(27, step, config.freq_reg_end, config.max_vis_freq_ratio))
+  def render_eval_fn(variables, _, rays):
+    return jax.lax.all_gather(
+        model.apply(
+            variables,
+            None,  # Deterministic.
+            rays,
+            resample_padding=config.resample_padding_final,
+            compute_extras=True,
+            freq_reg_mask=freq_reg_mask)[0], axis_name='batch')
+
+  # pmap over only the data input.
+  render_eval_pfn = jax.pmap(
+      render_eval_fn,
+      in_axes=(None, None, 0),
+      donate_argnums=2,
+      axis_name='batch',
+  )
 
   for idx in tqdm(range(dataset.size), total=dataset.size, dynamic_ncols=True):
     batch = next(dataset)

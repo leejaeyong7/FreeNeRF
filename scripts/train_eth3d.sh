@@ -5,7 +5,7 @@ mkdir -p $CHECKPOINT_DIR
 scene=$1
 rm -r "${CHECKPOINT_DIR}/${scene}/"
 
-echo python -m train --gin_configs=configs/eth3d.gin \
+python -m train --gin_configs=configs/eth3d.gin \
                 --gin_bindings="Config.data_dir = '${DATA_DIR}/${scene}/'" \
                 --gin_bindings="Config.checkpoint_dir = '${CHECKPOINT_DIR}/${scene}/'" \
                 --gin_bindings="Config.full_training = False"
